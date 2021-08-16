@@ -1,0 +1,73 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+{% if user.username == listing.user.username and not listing.closed %}
+    <h1>Listing: {{ listing.title }}</h1>
+    <form action="{% url 'listing_page' listing.id %}" method="post">
+        {% csrf_token %}
+        <button class="button" type="submit" name="closebutton" value="Close">Close auction</button>
+    </form> 
+
+{% else %}
+    <h1>Listing: {{ listing.title }}</h1>
+{% endif %}
+{% if user.username != listing.user.username and not listing.closed %}
+<form action="{% url 'listing_page' listing.id %}" method="post">
+    {% csrf_token %}
+    <button class="button" type="submit" name="watchbutton" value="Watchlist">Watchlist: Add/Delete this Listing</button>
+</form>
+{% endif %}
+{% if listing.closed and user.username == listing.bids.last.user.username %}
+<h3>You've won this auction!</h3>
+{% endif %}
+{% if listing.closed and user.username != listing.bids.last.user.username %}
+<h3>Winner: {{ listing.bids.last.user.username }}</h3>
+{% endif %}
+    <p></p>
+    <img src="{{ listing.image }}"style="border-radius: 8px" width="600" height="500">
+    <p><b>Description:</b> {{ listing.description }}</p>
+    <p><b>Price:</b> ${{ listing.starting_price }}</p>
+    <p><b>{{ listing.bids.count}} bid(s) so far.</b></p>
+    <p><b>Category: </b>{{ listing.category }}
+    </p>
+    <p><b>Owner: </b>{{ listing.user}}</p>
+    
+{% if not listing.closed %}
+    Place a bid:
+    <form action="{% url 'listing_page' listing.id %}" method="post">
+        {% csrf_token %}
+        {{ bidform.addbid }}
+        <input class="button" type="submit" value="Place bid">
+    </form>
+    <p><b>{{ bidmassage}}</b></p>
+{% else %}
+
+<p> <b>Place a bid: The listing is no longer active.</b></p>
+{% endif %}
+
+    <h5>Comments:</h5>
+{% for comment in listing.comment.all %}
+<hr>
+{{ comment.content}}
+<p><b>User:</b> {{ comment.user.username }}</p>
+<hr>
+{% endfor %}
+
+
+
+{% if not listing.closed %}
+Create comment:
+<form action="{% url 'listing_page' listing.id %}" method="post">
+    {% csrf_token %}
+    {{ commentform.content }}
+    <input class="button" type="submit" value="Add comment">
+</form>
+{% else %}
+Create comment:
+<p><b>The listing is no longer active.</b></p>
+{% endif %}
+
+
+<br>
+    <a style="color:black;" href="{% url 'index' %}">All Listings</a>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings in {{category}}:</h2>
+    <hr>
+    {% for listing in items %}
+    {% if not listing.closed %}
+    <br>
+    <h3>{{ listing.title }}</h3>
+    <p>{{ listing.description }}</p>
+    <p><b>Price:</b> ${{ listing.starting_price }}</p>
+    <a href="{% url 'listing_page' listing.id %}"><img src="{{ listing.image }}"style="border-radius: 8px" width="600" height="500"></a>
+    <hr>
+    <br>
+    {% endif %}
+    {% empty %} 
+    <p>There are no active Listings in this category</p>
+    {% endfor %}
+    <a style="color:black;" href="{% url 'categories' %}">All Categories</a>
+{% endblock %}
+

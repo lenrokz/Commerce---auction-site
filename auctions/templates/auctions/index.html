@@ -1,0 +1,17 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings:</h2>
+    <hr>
+    {% for listing in listings %}
+    <h3>{{ listing.title }}</h3>
+    <p>{{ listing.description }}</p>
+    <p><b>Price:</b> ${{ listing.starting_price }}</p>
+    {% if user.is_authenticated %}
+    <a href="{% url 'listing_page' listing.id %}"><img src="{{ listing.image }}"style="border-radius: 8px" width="600" height="500"></a>
+    {% else %}
+    <img src="{{ listing.image }}"style="border-radius: 8px" width="600" height="500"></a>
+    {% endif %}
+    <hr>
+    {% endfor %}
+{% endblock %}
